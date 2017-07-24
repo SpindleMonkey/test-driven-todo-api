@@ -54,7 +54,16 @@ app.get('/api/todos/search', function search(req, res) {
   /* This endpoint responds with the search results from the
    * query in the request. COMPLETE THIS ENDPOINT LAST.
    */
-  console.log(req.body);
+  console.log(req.query.q);
+  var results = [];
+  for (var m = 0; m < todos.length; m++) {
+    console.log(todos[m].task.search(req.query.q));
+    console.log(todos[m].description.search(req.query.q));
+    if (todos[m].task.search(req.query.q) >= 0 || todos[m].description.search(req.query.q) >= 0) {
+      results.push(todos[m]);
+    }
+  }
+  res.json(results);
 });
 
 app.get('/api/todos', function index(req, res) {
