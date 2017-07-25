@@ -18,14 +18,13 @@ app.use(express.static(__dirname + '/public'));
 var todos = [
   { _id: 1, task: 'Laundry', description: 'Wash clothes' },
   { _id: 2, task: 'Grocery Shopping', description: 'Buy dinner for this week' },
-  { _id: 3, task: 'Homework', description: 'Make this app super awesome!' }
+  { _id: 3, task: 'Homework', description: 'Make this app super awesome!' },
+  { _id: 4, task: 'Cats', description: 'Get more dry food'},
+  { _id: 5, task: 'Cats 2.0', description: 'Wash the cat beds'}
 ];
 
-var newTodo = {
-  _id: 0,
-  task: '',
-  description: '',
-};
+// search results
+var results = [];
 
 /**********
  * ROUTES *
@@ -37,6 +36,10 @@ var newTodo = {
 
 app.get('/', function homepage(req, res) {
   res.sendFile(__dirname + '/views/index.html');
+});
+
+app.get('/search', function searchpage(req, res) {
+  res.sendFile(__dirname + '/views/search.html');
 });
 
 
@@ -51,19 +54,18 @@ app.get('/', function homepage(req, res) {
  */
 
 app.get('/api/todos/search', function search(req, res) {
-  /* This endpoint responds with the search results from the
-   * query in the request. COMPLETE THIS ENDPOINT LAST.
-   */
-  console.log(req.query.q);
-  var results = [];
+ //console.log(req.query.q);
+  var re = new RegExp(req.query.q, 'i');
+  console.log(re);
   for (var m = 0; m < todos.length; m++) {
-    console.log(todos[m].task.search(req.query.q));
-    console.log(todos[m].description.search(req.query.q));
-    if (todos[m].task.search(req.query.q) >= 0 || todos[m].description.search(req.query.q) >= 0) {
+    //console.log(todos[m].task.search(req.query.q));
+    //console.log(todos[m].description.search(req.query.q));
+    //if (todos[m].task.search(re) >= 0 || todos[m].description.search(re) >= 0) {
+    if (todos[m].task.search(re) >= 0) {
       results.push(todos[m]);
     }
   }
-  res.json(results);
+  res.json({todos: results});
 });
 
 app.get('/api/todos', function index(req, res) {
@@ -71,18 +73,17 @@ app.get('/api/todos', function index(req, res) {
 });
 
 app.post('/api/todos', function create(req, res) {
-  newTodo._id = todos.length + 1;
-  newTodo.task = req.body.task;
-  newTodo.description = req.body.description;
-  todos.push(newTodo);
-  res.json(newTodo);
+  todos.push({ 
+    _id: todos[todos.length - 1]._id + 1, 
+    task: req.body.task, 
+    description: req.body.description
+  });
+  res.json(todos[todos.length - 1]);
 });
 
 app.get('/api/todos/:id', function show(req, res) {
   var id = req.params.id;
-  //console.log('id: ' + id);
   for (var i = 0; i < todos.length; i++) {
-    //console.log('i; ' + i);
     if (todos[i]._id == id) {
       res.send(todos[i]);
       break;
@@ -110,19 +111,8 @@ app.put('/api/todos/:id', function update(req, res) {
 app.delete('/api/todos/:id', function destroy(req, res) {
   for (var j = 0; j < todos.length; j++) {
     if (todos[j]._id == req.params.id) {
-      // save a copy of the deleted todo
-      // newTodo._id = todos[j]._id;
-      // newTodo.task = todos[j].task;
-      // newTodo.description = todos[j].description;
-
-      // todos[j]._id= -1;
-      // todos[j].task = '';
-      // todos[j].description = '';
-      //res.json(newTodo);
       res.json(todos[j]);
       todos.splice(j, 1);
-
-      //res.json(newTodo);
     }
   }
 });

@@ -17,6 +17,19 @@ $(document).ready(function() {
   var source = $('#todos-template').html();
   var template = Handlebars.compile(source);
 
+  // // form to search todos
+  // var $searchTodo = $('#search-todo');
+
+  // // search results
+  // var results = [];
+
+  // // element to display list of search results
+  // var $resultsList = $('#search-list');
+
+  // // and now do the search version of the template
+  // var searchSource = $('#search-template').html();
+  // var searchTemplate = Handlebars.compile(searchSource);
+
   // helper function to render all todos to view
   // note: we empty and re-render the collection each time our todo data changes
   function render() {
@@ -28,14 +41,26 @@ $(document).ready(function() {
 
     // append html to the view
     $todosList.append(todosHtml);
-  };
+  }
+
+  // // search version of the render() helper function
+  // function renderResults() {
+  //   // empty existing todos from view
+  //   $resultsList.empty();
+
+  //   // pass 'results' into the template function
+  //   var resultsHtml = searchTemplate({ todos: results });
+
+  //   // append html to the view
+  //   $resultsList.append(resultsHtml);
+  // }
 
   // GET all todos on page load
   $.ajax({
     method: "GET",
     url: baseUrl,
     success: function onIndexSuccess(json) {
-      console.log(json);
+      //console.log(json);
 
       // set `allTodos` to todo data (json.data) from API
       allTodos = json.todos;
@@ -45,7 +70,38 @@ $(document).ready(function() {
     }
   });
 
-  // listen for submit even on form
+  // // listen for submit event on form
+  // $searchTodo.on('submit', function (event) {
+  //   event.preventDefault();
+  //   //console.log(event);
+
+  //   // serialze form data
+  //   var newTodoSearch = $(this).serialize();
+  //   //console.log($(this));
+  //   //console.log(newTodoSearch);
+
+  //   // Get request to create new todo
+  //   console.log(baseUrl + '/search?' + newTodoSearch);
+  //   $.ajax({
+  //     method: "GET",
+  //     url: baseUrl + '/search?' + newTodoSearch,
+  //     success: function onSearchSuccess(json) {
+  //       console.log(json);
+
+  //       // place all search results in results
+  //       results = json.todos;
+
+  //       // render all todos to view
+  //       renderResults();
+  //     }
+  //   });
+
+  //   // reset the form
+  //   $searchTodo[0].reset();
+  //   $searchTodo.find('input').first().focus();
+  // });
+
+  // listen for submit event on form
   $createTodo.on('submit', function (event) {
     event.preventDefault();
 
@@ -133,3 +189,6 @@ $(document).ready(function() {
     });
 
 });
+
+
+
